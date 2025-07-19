@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision API - Image Processing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Vision API</h1>
+        <p class="subtitle">Professional Image Processing & Computer Vision</p>
+        
+        <!-- Server Status -->
+        <div class="status-bar">
+            <span id="server-status">Checking server status...</span>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div class="upload-section">
+            <h3>📸 Upload Image</h3>
+            <div class="upload-area" id="upload-area">
+                <input type="file" id="image-input" accept="image/*" hidden>
+                <div class="upload-content">
+                    <div class="upload-icon">📁</div>
+                    <p>Click to select an image or drag & drop</p>
+                    <small>Supports: JPEG, PNG, WEBP, BMP, TIFF (Max: 4000x4000px)</small>
+                </div>
+            </div>
+            <div id="upload-error" class="error"></div>
+        </div>
+
+        <!-- Image Preview Section -->
+        <div class="preview-section" id="preview-section" style="display: none;">
+            <h3>🖼️ Image Preview</h3>
+            <div class="image-container">
+                <div class="image-box">
+                    <h4>Original</h4>
+                    <img id="original-image" alt="Original image">
+                    <div class="image-info" id="original-info"></div>
+                </div>
+                <div class="image-box">
+                    <h4>Processed</h4>
+                    <div id="processed-placeholder" class="placeholder">
+                        Select a filter and click process
+                    </div>
+                    <img id="processed-image" alt="Processed image" style="display: none;">
+                    <div class="image-info" id="processed-info"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Selection Section -->
+        <div class="filter-section" id="filter-section" style="display: none;">
+            <h3>🎨 Select Filter</h3>
+            
+            <div class="filter-grid">
+                <div class="filter-card" data-filter="invert">
+                    <div class="filter-icon">🔄</div>
+                    <h4>Invert</h4>
+                    <p>Negative colors effect</p>
+                </div>
+                
+                <div class="filter-card" data-filter="grayscale">
+                    <div class="filter-icon">⚫</div>
+                    <h4>Grayscale</h4>
+                    <p>Black & white conversion</p>
+                </div>
+                
+                <div class="filter-card" data-filter="contrast">
+                    <div class="filter-icon">🌗</div>
+                    <h4>Contrast</h4>
+                    <p>Enhance image contrast</p>
+                </div>
+                
+                <div class="filter-card" data-filter="blur">
+                    <div class="filter-icon">🌫️</div>
+                    <h4>Blur</h4>
+                    <p>Gaussian blur effect</p>
+                </div>
+                
+                <div class="filter-card" data-filter="sharpen">
+                    <div class="filter-icon">🔍</div>
+                    <h4>Sharpen</h4>
+                    <p>Edge enhancement</p>
+                </div>
+            </div>
+
+            <!-- Filter Parameters -->
+            <div class="parameters-section" id="parameters-section" style="display: none;">
+                <h4>Filter Parameters</h4>
+                
+                <!-- Contrast Parameters -->
+                <div class="parameter-group" id="contrast-params" style="display: none;">
+                    <label for="contrast-factor">Contrast Factor:</label>
+                    <div class="slider-container">
+                        <input type="range" id="contrast-factor" min="0.1" max="3.0" step="0.1" value="1.5">
+                        <span class="slider-value" id="contrast-value">1.5</span>
+                    </div>
+                    <small>0.1 = Very low contrast, 1.0 = Original, 3.0 = Very high contrast</small>
+                </div>
+
+                <!-- Blur Parameters -->
+                <div class="parameter-group" id="blur-params" style="display: none;">
+                    <label for="blur-radius">Blur Radius:</label>
+                    <div class="slider-container">
+                        <input type="range" id="blur-radius" min="0.5" max="10.0" step="0.5" value="2.0">
+                        <span class="slider-value" id="blur-value">2.0</span>
+                    </div>
+                    <small>0.5 = Slight blur, 5.0 = Medium blur, 10.0 = Heavy blur</small>
+                </div>
+
+                <!-- Sharpen Parameters -->
+                <div class="parameter-group" id="sharpen-params" style="display: none;">
+                    <label for="sharpen-factor">Sharpen Factor:</label>
+                    <div class="slider-container">
+                        <input type="range" id="sharpen-factor" min="0.1" max="5.0" step="0.1" value="2.0">
+                        <span class="slider-value" id="sharpen-value">2.0</span>
+                    </div>
+                    <small>0.1 = Very soft, 1.0 = Original, 5.0 = Very sharp</small>
+                </div>
+            </div>
+
+            <!-- Process Button -->
+            <div class="action-section">
+                <button id="process-btn" class="process-button" disabled>
+                    <span class="btn-icon">⚡</span>
+                    <span class="btn-text">Process Image</span>
+                </button>
+                <button id="reset-btn" class="reset-button">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">Reset</span>
+                </button>
+            </div>
+
+            <div id="process-error" class="error"></div>
+            <div id="process-result" class="result"></div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="download-section" id="download-section" style="display: none;">
+            <h3>💾 Download Result</h3>
+            <div class="download-options">
+                <button id="download-btn" class="download-button">
+                    <span class="btn-icon">⬇️</span>
+                    Download Processed Image
+                </button>
+                <select id="format-select">
+                    <option value="JPEG">JPEG (Smaller file)</option>
+                    <option value="PNG">PNG (Higher quality)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- API Information -->
+        <div class="api-info">
+            <details>
+                <summary>🔧 API Information</summary>
+                <div class="api-content">
+                    <h4>Available Endpoints:</h4>
+                    <ul>
+                        <li><code>POST /process</code> - Process image with selected filter</li>
+                        <li><code>GET /filters</code> - Get available filters and parameters</li>
+                        <li><code>GET /health</code> - API health check</li>
+                    </ul>
+                    <h4>Supported Formats:</h4>
+                    <p>Input: JPEG, PNG, WEBP, BMP, TIFF<br>
+                    Output: JPEG, PNG</p>
+                    <h4>Size Limits:</h4>
+                    <p>Maximum image size: 4000x4000 pixels</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
