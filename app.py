@@ -101,7 +101,7 @@ def api_info():
         },
         "limits": {
             "max_file_size": "16MB",
-            "max_image_dimensions": "4000x4000px",
+            "max_image_dimensions": "10000x10000px",
             "file_retention": "1 hour"
         }
     })
@@ -415,7 +415,7 @@ if __name__ == '__main__':
     print("=" * 50)
     print("💡 Supported Filters: invert, grayscale, contrast, blur, sharpen")
     print("📁 Max File Size: 16MB")
-    print("🖼️ Max Dimensions: 4000x4000px")
+    print("🖼️ Max Dimensions: 10000x10000px")
     print("⏰ File Retention: 1 hour")
     print("=" * 50)
     

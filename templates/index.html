@@ -11,46 +11,133 @@
         <h1>Vision API</h1>
         <p class="subtitle">Professional Image Processing & Computer Vision</p>
         
-        <!-- Server Status -->
-        <div class="status-bar">
-            <span id="server-status">Checking server status...</span>
-        </div>
-
-        <!-- Image Upload Section -->
-        <div class="upload-section">
-            <h3>📸 Upload Image</h3>
-            <div class="upload-area" id="upload-area">
-                <input type="file" id="image-input" accept="image/*" hidden>
-                <div class="upload-content">
-                    <div class="upload-icon">📁</div>
-                    <p>Click to select an image or drag & drop</p>
-                    <small>Supports: JPEG, PNG, WEBP, BMP, TIFF (Max: 4000x4000px)</small>
-                </div>
-            </div>
-            <div id="upload-error" class="error"></div>
-        </div>
-
-        <!-- Image Preview Section -->
-        <div class="preview-section" id="preview-section" style="display: none;">
-            <h3>🖼️ Image Preview</h3>
-            <div class="image-container">
-                <div class="image-box">
-                    <h4>Original</h4>
-                    <img id="original-image" alt="Original image">
-                    <div class="image-info" id="original-info"></div>
-                </div>
-                <div class="image-box">
-                    <h4>Processed</h4>
-                    <div id="processed-placeholder" class="placeholder">
-                        Select a filter and click process
+        <!-- Main Processing Area -->
+        <div class="main-processing-area">
+            <!-- Filter Selection Toolbar -->
+            <div class="filter-toolbar" id="filter-toolbar" style="display: none;">
+                <h3>🎨 Select Filter</h3>
+                <div class="filter-grid">
+                    <div class="filter-card" data-filter="invert">
+                        <div class="filter-icon">🔄</div>
+                        <span>Invert</span>
                     </div>
-                    <img id="processed-image" alt="Processed image" style="display: none;">
+                    
+                    <div class="filter-card" data-filter="grayscale">
+                        <div class="filter-icon">⚫</div>
+                        <span>Grayscale</span>
+                    </div>
+                    
+                    <div class="filter-card" data-filter="contrast">
+                        <div class="filter-icon">🌗</div>
+                        <span>Contrast</span>
+                    </div>
+                    
+                    <div class="filter-card" data-filter="blur">
+                        <div class="filter-icon">🌫️</div>
+                        <span>Blur</span>
+                    </div>
+                    
+                    <div class="filter-card" data-filter="sharpen">
+                        <div class="filter-icon">🔍</div>
+                        <span>Sharpen</span>
+                    </div>
+                </div>
+
+                <!-- Filter Parameters -->
+                <div class="parameters-section" id="parameters-section" style="display: none;">
+                    <!-- Contrast Parameters -->
+                    <div class="parameter-group" id="contrast-params" style="display: none;">
+                        <label for="contrast-factor">Contrast:</label>
+                        <div class="slider-container">
+                            <input type="range" id="contrast-factor" min="0.1" max="3.0" step="0.1" value="1.5">
+                            <span class="slider-value" id="contrast-value">1.5</span>
+                        </div>
+                    </div>
+
+                    <!-- Blur Parameters -->
+                    <div class="parameter-group" id="blur-params" style="display: none;">
+                        <label for="blur-radius">Radius:</label>
+                        <div class="slider-container">
+                            <input type="range" id="blur-radius" min="0.5" max="10.0" step="0.5" value="2.0">
+                            <span class="slider-value" id="blur-value">2.0</span>
+                        </div>
+                    </div>
+
+                    <!-- Sharpen Parameters -->
+                    <div class="parameter-group" id="sharpen-params" style="display: none;">
+                        <label for="sharpen-factor">Factor:</label>
+                        <div class="slider-container">
+                            <input type="range" id="sharpen-factor" min="0.1" max="5.0" step="0.1" value="2.0">
+                            <span class="slider-value" id="sharpen-value">2.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-section">
+                    <button id="process-btn" class="process-button" disabled>
+                        <span class="btn-icon">⚡</span>
+                        Process
+                    </button>
+                    <button id="reset-btn" class="reset-button">
+                        <span class="btn-icon">🔄</span>
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Image Processing Area -->
+            <div class="image-processing-area">
+                <!-- Upload/Original Image Area -->
+                <div class="image-section">
+                    <h4>Original Image</h4>
+                    <div class="upload-area" id="upload-area">
+                        <input type="file" id="image-input" accept="image/*" hidden>
+                        <div class="upload-content" id="upload-content">
+                            <div class="upload-icon">📁</div>
+                            <p>Click or drag & drop image</p>
+                            <small>JPEG, PNG, WEBP, BMP, TIFF (Max: 10000x10000px)</small>
+                        </div>
+                        <img id="original-image" alt="Original image" style="display: none;">
+                    </div>
+                    <div class="image-info" id="original-info"></div>
+                    <div id="upload-error" class="error"></div>
+                </div>
+
+                <!-- Processed Image Area -->
+                <div class="image-section">
+                    <h4>Processed Image</h4>
+                    <div class="processed-area">
+                        <div id="processed-placeholder" class="placeholder">
+                            Upload an image and select a filter
+                        </div>
+                        <img id="processed-image" alt="Processed image" style="display: none;">
+                    </div>
                     <div class="image-info" id="processed-info"></div>
+                    <div id="process-error" class="error"></div>
+                    <div id="process-result" class="result"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Filter Selection Section -->
+        <!-- Download Section -->
+        <div class="download-section" id="download-section" style="display: none;">
+            <div class="download-options">
+                <button id="download-btn" class="download-button">
+                    <span class="btn-icon">⬇️</span>
+                    Download Result
+                </button>
+                <select id="format-select">
+                    <option value="JPEG">JPEG</option>
+                    <option value="PNG">PNG</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Hidden status for development -->
+        <div id="server-status" style="display: none;">Checking server status...</div>
+
+        <!-- Compact Filter Section (keeping for JS compatibility) -->
         <div class="filter-section" id="filter-section" style="display: none;">
             <h3>🎨 Select Filter</h3>
             
@@ -167,7 +254,7 @@
                     <p>Input: JPEG, PNG, WEBP, BMP, TIFF<br>
                     Output: JPEG, PNG</p>
                     <h4>Size Limits:</h4>
-                    <p>Maximum image size: 4000x4000 pixels</p>
+                    <p>Maximum image size: 10000x10000 pixels</p>
                 </div>
             </details>
         </div>

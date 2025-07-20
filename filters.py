@@ -4,7 +4,6 @@ Contains all image transformation functions used by the Flask API
 """
 
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
-import numpy as np
 from typing import Union, Tuple
 import io
 
@@ -234,7 +233,7 @@ def validate_image(image_data: bytes) -> Image.Image:
             raise ValueError(f"Unsupported image format: {image.format}")
         
         # Validate image size (prevent extremely large images)
-        max_size = (4000, 4000)  # 4K resolution limit
+        max_size = (10000, 10000)  # 10K resolution limit
         if image.size[0] > max_size[0] or image.size[1] > max_size[1]:
             raise ValueError(f"Image too large. Maximum size: {max_size[0]}x{max_size[1]}")
         

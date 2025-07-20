@@ -110,8 +110,7 @@ class VisionAPI {
         this.hideError('upload-error');
         
         // Show preview and filter sections
-        document.getElementById('preview-section').style.display = 'block';
-        document.getElementById('filter-section').style.display = 'block';
+        document.getElementById('filter-toolbar').style.display = 'block';
         
         // Reset processed image
         this.resetProcessedImage();
@@ -292,8 +291,7 @@ class VisionAPI {
     // Reset interface
     resetInterface() {
         // Reset all sections
-        document.getElementById('preview-section').style.display = 'none';
-        document.getElementById('filter-section').style.display = 'none';
+        document.getElementById('filter-toolbar').style.display = 'none';
         document.getElementById('download-section').style.display = 'none';
         document.getElementById('parameters-section').style.display = 'none';
 
