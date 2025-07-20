@@ -27,7 +27,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024  # 20MB max file size
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['PROCESSED_FOLDER'] = 'processed'
 app.config['SECRET_KEY'] = 'vision-api-secret-key-change-in-production'
@@ -100,7 +100,7 @@ def api_info():
             "output": ["JPEG", "PNG"]
         },
         "limits": {
-            "max_file_size": "16MB",
+            "max_file_size": "20MB",
             "max_image_dimensions": "10000x10000px",
             "file_retention": "1 hour"
         }
@@ -377,8 +377,8 @@ def too_large(e):
     """Handle file too large error"""
     return jsonify({
         "error": "File too large",
-        "message": "Maximum file size is 16MB",
-        "max_size": "16MB"
+        "message": "Maximum file size is 20MB",
+        "max_size": "20MB"
     }), 413
 
 @app.errorhandler(404)
@@ -414,7 +414,7 @@ if __name__ == '__main__':
     print("📊 Statistics: http://127.0.0.1:5000/stats")
     print("=" * 50)
     print("💡 Supported Filters: invert, grayscale, contrast, blur, sharpen")
-    print("📁 Max File Size: 16MB")
+    print("📁 Max File Size: 20MB")
     print("🖼️ Max Dimensions: 10000x10000px")
     print("⏰ File Retention: 1 hour")
     print("=" * 50)

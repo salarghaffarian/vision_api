@@ -228,18 +228,30 @@ def validate_image(image_data: bytes) -> Image.Image:
     try:
         image = Image.open(io.BytesIO(image_data))
         
-        # Validate image format
-        if image.format not in ['JPEG', 'PNG', 'WEBP', 'BMP', 'TIFF']:
-            raise ValueError(f"Unsupported image format: {image.format}")
+        # Print debug info
+        print(f"Image format: {image.format}")
+        print(f"Image mode: {image.mode}")
+        print(f"Image size: {image.size}")
+        
+        # Validate image format - be more permissive with JPEG variants
+        allowed_formats = ['JPEG', 'PNG', 'WEBP', 'BMP', 'TIFF', 'GIF']
+        if image.format not in allowed_formats:
+            print(f"Warning: Unusual format {image.format}, trying to process anyway...")
+            # Don't raise error immediately, try to convert
         
         # Validate image size (prevent extremely large images)
         max_size = (10000, 10000)  # 10K resolution limit
         if image.size[0] > max_size[0] or image.size[1] > max_size[1]:
             raise ValueError(f"Image too large. Maximum size: {max_size[0]}x{max_size[1]}")
         
+        # Try to load the image to ensure it's valid
+        image.load()
+        
         return image
         
     except Exception as e:
+        print(f"Image validation error: {str(e)}")
+        print(f"Error type: {type(e)}")
         raise ValueError(f"Invalid image file: {str(e)}")
 
 

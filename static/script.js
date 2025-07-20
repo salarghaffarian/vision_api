@@ -91,19 +91,29 @@ class VisionAPI {
 
     // Handle file processing
     handleFile(file) {
-        // Validate file type
-        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/bmp', 'image/tiff'];
-        if (!validTypes.includes(file.type)) {
-            this.showError('upload-error', 'Please select a valid image file (JPEG, PNG, WEBP, BMP, TIFF)');
+        // Validate file type - more permissive for DJI drones
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/bmp', 'image/tiff', 'image/gif'];
+        
+        // Check file extension as backup (some DJI files might have unusual MIME types)
+        const fileName = file.name.toLowerCase();
+        const hasValidExtension = fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || 
+                                 fileName.endsWith('.png') || fileName.endsWith('.webp') || 
+                                 fileName.endsWith('.bmp') || fileName.endsWith('.tiff') || 
+                                 fileName.endsWith('.gif');
+        
+        if (!validTypes.includes(file.type) && !hasValidExtension) {
+            this.showError('upload-error', `Please select a valid image file. File type: ${file.type}, Extension: ${fileName.split('.').pop()}`);
             return;
         }
 
-        // Validate file size (10MB limit)
-        const maxSize = 10 * 1024 * 1024; // 10MB
+        // Validate file size (15MB limit)
+        const maxSize = 15 * 1024 * 1024; // 15MB
         if (file.size > maxSize) {
-            this.showError('upload-error', 'File size too large. Maximum size is 10MB');
+            this.showError('upload-error', 'File size too large. Maximum size is 15MB');
             return;
         }
+
+        console.log(`File info: ${file.name}, Type: ${file.type}, Size: ${file.size} bytes`);
 
         this.uploadedImage = file;
         this.displayOriginalImage(file);
