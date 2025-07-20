@@ -1,0 +1,31 @@
+# Vision API - Python Dependencies
+# Core web framework and utilities
+
+# Flask Framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# CORS support for cross-origin requests
+Flask-CORS==4.0.0
+
+# Image processing libraries
+Pillow==10.0.1
+
+# Additional utilities (optional but recommended)
+python-dotenv==1.0.0
+
+# Development and testing dependencies (optional)
+# Uncomment for development environment
+# pytest==7.4.2
+# pytest-flask==1.2.0
+# black==23.9.1
+# flake8==6.1.0
+
+# Production server (optional)
+# Uncomment for production deployment
+# gunicorn==21.2.0
+# waitress==2.1.2
+
+# Performance monitoring (optional)
+# Uncomment for monitoring in production
+# psutil==5.9.5
