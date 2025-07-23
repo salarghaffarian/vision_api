@@ -19,12 +19,23 @@ class VisionAPI {
         const uploadArea = document.getElementById('upload-area');
         const imageInput = document.getElementById('image-input');
 
-        uploadArea.addEventListener('click', () => imageInput.click());
+        // Make sure click events work properly
+        uploadArea.addEventListener('click', (e) => {
+            // Only trigger file input if we don't have an image yet
+            if (!uploadArea.classList.contains('has-image')) {
+                imageInput.click();
+            }
+        });
+        
         uploadArea.addEventListener('dragover', this.handleDragOver.bind(this));
         uploadArea.addEventListener('dragleave', this.handleDragLeave.bind(this));
         uploadArea.addEventListener('drop', this.handleDrop.bind(this));
         
-        imageInput.addEventListener('change', this.handleImageSelect.bind(this));
+        // This is the key - make sure the change event is properly bound
+        imageInput.addEventListener('change', (e) => {
+            console.log('File input change event triggered');
+            this.handleImageSelect(e);
+        });
 
         // Filter selection events
         document.querySelectorAll('.filter-card').forEach(card => {
@@ -83,9 +94,13 @@ class VisionAPI {
 
     // Handle image selection
     handleImageSelect(e) {
+        console.log('handleImageSelect called', e.target.files);
         const file = e.target.files[0];
         if (file) {
+            console.log('File selected:', file.name, file.type, file.size);
             this.handleFile(file);
+        } else {
+            console.log('No file selected');
         }
     }
 
@@ -131,8 +146,22 @@ class VisionAPI {
         const reader = new FileReader();
         reader.onload = (e) => {
             const img = document.getElementById('original-image');
+            const uploadContent = document.getElementById('upload-content');
+            const uploadInstructions = document.getElementById('upload-instructions');
+            const uploadArea = document.getElementById('upload-area');
+            
+            // Hide the upload content text
+            uploadContent.style.display = 'none';
+            
+            // Show the image
             img.src = e.target.result;
             img.style.display = 'block';
+            
+            // Add class to upload area to make it identical to processed container
+            uploadArea.classList.add('has-image');
+            
+            // Show instructions below the box
+            uploadInstructions.style.display = 'block';
             
             // Create image object to get dimensions
             const imageObj = new Image();
@@ -221,7 +250,8 @@ class VisionAPI {
 
             if (response.ok) {
                 this.displayProcessedImage(result);
-                this.showSuccess('process-result', 'Image processed successfully!');
+                // Don't show success message anymore
+                // this.showSuccess('process-result', 'Image processed successfully!');
                 this.hideError('process-error');
                 showToast('Image processed successfully!', 'success');
             } else {
@@ -260,17 +290,55 @@ class VisionAPI {
     displayProcessedImage(result) {
         const processedImg = document.getElementById('processed-image');
         const placeholder = document.getElementById('processed-placeholder');
+        const originalImg = document.getElementById('original-image');
         
         // Create image URL from response
         this.processedImageUrl = `${this.apiBase}/processed/${result.filename}`;
         
-        processedImg.src = this.processedImageUrl;
-        processedImg.style.display = 'block';
+        // Hide placeholder first
         placeholder.style.display = 'none';
         
-        // Update processed image info
-        const info = `${result.filter} filter applied • ${result.processing_time}ms`;
-        document.getElementById('processed-info').textContent = info;
+        // RESET all inline styles first to prevent accumulation
+        processedImg.style.width = '';
+        processedImg.style.height = '';
+        processedImg.style.maxWidth = '';
+        processedImg.style.maxHeight = '';
+        processedImg.style.objectFit = '';
+        processedImg.style.borderRadius = '';
+        processedImg.style.boxShadow = '';
+        processedImg.style.position = '';
+        processedImg.style.transform = '';
+        processedImg.style.top = '';
+        processedImg.style.left = '';
+        
+        // Set the processed image source
+        processedImg.src = this.processedImageUrl;
+        
+        // Force the processed image to match original image exactly
+        processedImg.onload = () => {
+            if (originalImg && originalImg.style.display !== 'none') {
+                // Get the exact computed style from original image
+                const originalComputedStyle = window.getComputedStyle(originalImg);
+                
+                console.log('Copying styles from original to processed image');
+                
+                // Copy all relevant styles from original to processed
+                processedImg.style.width = originalComputedStyle.width;
+                processedImg.style.height = originalComputedStyle.height;
+                processedImg.style.maxWidth = originalComputedStyle.maxWidth;
+                processedImg.style.maxHeight = originalComputedStyle.maxHeight;
+                processedImg.style.objectFit = originalComputedStyle.objectFit;
+                processedImg.style.borderRadius = originalComputedStyle.borderRadius;
+                processedImg.style.boxShadow = originalComputedStyle.boxShadow;
+                processedImg.style.position = originalComputedStyle.position;
+                processedImg.style.transform = originalComputedStyle.transform;
+                processedImg.style.top = originalComputedStyle.top;
+                processedImg.style.left = originalComputedStyle.left;
+                
+                console.log('Applied fresh styles from original to processed image');
+            }
+            processedImg.style.display = 'block';
+        };
         
         // Show download section
         document.getElementById('download-section').style.display = 'block';
@@ -335,12 +403,41 @@ class VisionAPI {
         const processedImg = document.getElementById('processed-image');
         const placeholder = document.getElementById('processed-placeholder');
         
+        // COMPLETELY reset the processed image styles
         processedImg.style.display = 'none';
         processedImg.src = '';
+        processedImg.style.width = '';
+        processedImg.style.height = '';
+        processedImg.style.maxWidth = '';
+        processedImg.style.maxHeight = '';
+        processedImg.style.objectFit = '';
+        processedImg.style.borderRadius = '';
+        processedImg.style.boxShadow = '';
+        processedImg.style.position = '';
+        processedImg.style.transform = '';
+        processedImg.style.top = '';
+        processedImg.style.left = '';
+        
         placeholder.style.display = 'flex';
         
         document.getElementById('processed-info').textContent = '';
         document.getElementById('download-section').style.display = 'none';
+        
+        // Also reset original image area
+        const uploadContent = document.getElementById('upload-content');
+        const uploadInstructions = document.getElementById('upload-instructions');
+        const originalImage = document.getElementById('original-image');
+        const uploadArea = document.getElementById('upload-area');
+        
+        if (uploadContent && uploadInstructions && originalImage && uploadArea) {
+            uploadContent.style.display = 'block';
+            uploadInstructions.style.display = 'none';
+            originalImage.style.display = 'none';
+            uploadArea.classList.remove('has-image');
+            document.getElementById('original-info').textContent = '';
+        }
+        
+        console.log('Reset all image styles to default');
     }
 
     // Check server health

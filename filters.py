@@ -274,6 +274,9 @@ def image_to_bytes(image: Image.Image, format: str = 'JPEG', quality: int = 95) 
         if format.upper() not in ['JPEG', 'PNG', 'WEBP']:
             format = 'JPEG'
         
+        # IMPORTANT: Preserve original image size
+        print(f"Original image size before conversion: {image.size}")
+        
         # Save with appropriate parameters
         if format.upper() == 'JPEG':
             # Convert to RGB if necessary for JPEG
@@ -283,10 +286,12 @@ def image_to_bytes(image: Image.Image, format: str = 'JPEG', quality: int = 95) 
                     image = image.convert('RGBA')
                 background.paste(image, mask=image.split()[-1] if image.mode == 'RGBA' else None)
                 image = background
-            image.save(output, format=format, quality=quality, optimize=True)
+            # Use high quality to preserve image details
+            image.save(output, format=format, quality=quality, optimize=False)
         else:
-            image.save(output, format=format, optimize=True)
+            image.save(output, format=format, optimize=False)
         
+        print(f"Processed image size after conversion: {image.size}")
         return output.getvalue()
         
     except Exception as e:

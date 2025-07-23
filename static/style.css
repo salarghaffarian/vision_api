@@ -1,4 +1,29 @@
-/* Vision API - Modern Image Processing Interface */
+/* Meta section - below the image containers */
+.image-meta {
+    flex-shrink: 0;
+    margin-top: 15px;
+    min-height: 60px; /* Reserve space for consistency */
+}
+
+/* Upload Instructions */
+.upload-instructions {
+    margin-top: 15px;
+    padding: 12px;
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-radius: 8px;
+    border: 1px solid #bbdefb;
+    text-align: center;
+}
+
+.upload-instructions p {
+    margin: 0;
+    color: #1565c0;
+    font-size: 0.9em;
+}
+
+.upload-instructions strong {
+    color: #0d47a1;
+}/* Vision API - Modern Image Processing Interface */
 
 * {
     margin: 0;
@@ -128,20 +153,43 @@ h3 {
     font-weight: 600;
 }
 
-/* Upload Area */
-.upload-area {
-    border: 3px dashed #dee2e6;
-    border-radius: 15px;
-    padding: 30px 20px;
+/* Upload Instructions */
+.upload-instructions {
+    margin-top: 15px;
+    padding: 12px;
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-radius: 8px;
+    border: 1px solid #bbdefb;
     text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
+}
+
+.upload-instructions p {
+    margin: 0;
+    color: #1565c0;
+    font-size: 0.9em;
+}
+
+.upload-instructions strong {
+    color: #0d47a1;
+}
+
+/* Upload and Processed Areas */
+.upload-area, .processed-area {
+    border: 2px solid #dee2e6;
+    border-radius: 15px;
     background: linear-gradient(45deg, #f8f9fa, #ffffff);
-    min-height: 300px;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+}
+
+.upload-area {
+    border-style: dashed;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .upload-area:hover {
@@ -154,6 +202,11 @@ h3 {
     border-color: #28a745;
     background: linear-gradient(45deg, #f0fff4, #ffffff);
     transform: scale(1.05);
+}
+
+.upload-area.has-image {
+    padding: 0;
+    border-style: solid;
 }
 
 .upload-content {
@@ -179,9 +232,33 @@ h3 {
 
 #original-image {
     max-width: 100%;
-    max-height: 280px;
-    border-radius: 8px;
+    max-height: 100%;
+    border-radius: 13px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: none;
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+
+/* Upload Instructions */
+.upload-instructions {
+    margin-top: 15px;
+    padding: 12px;
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-radius: 8px;
+    border: 1px solid #bbdefb;
+    text-align: center;
+}
+
+.upload-instructions p {
+    margin: 0;
+    color: #1565c0;
+    font-size: 0.9em;
+}
+
+.upload-instructions strong {
+    color: #0d47a1;
 }
 
 /* Processed Area */
